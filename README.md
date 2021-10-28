@@ -1,0 +1,1 @@
+# wso2mi-log4j2-kafka-appender
