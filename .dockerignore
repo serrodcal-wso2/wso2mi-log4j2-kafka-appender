@@ -1,0 +1,3 @@
+*
+!dropins/*.jar
+!entrypoint/docker-entrypoint.sh

@@ -1,0 +1,44 @@
+version: '3.9'
+
+networks:
+  local:
+
+services:
+  # Compatible with Kafka protocol, but it starts earlier
+  redpanda:
+    container_name: redpanda
+    image: vectorized/redpanda:v21.9.6
+    command:
+      - redpanda
+      - start
+      - --smp
+      - '1'
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - '0'
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://redpanda:29092,OUTSIDE://localhost:9092
+    ports:
+      - 9092:9092
+      - 29092:29092
+    networks:
+      - local
+
+  mi:
+    container_name: mi
+    #image: serrodcal/wso2mi-kafka:4.0.0
+    image: wso2/wso2mi:4.0.0
+    ports:
+      - 8290:8290
+    volumes:
+      - ./api/Health.xml:/home/wso2carbon/wso2mi-4.0.0/repository/deployment/server/synapse-configs/default/api/Health.xml
+      - ./conf/log4j2.properties:/home/wso2carbon/wso2mi-4.0.0/conf/log4j2.properties
+      - ./target/wso2-mi-log4j2-kafka-appender-0.1.0.jar:/home/wso2carbon/wso2mi-4.0.0/dropins/log4j2-kafka-appender.jar
+    depends_on:
+      - redpanda
+    networks:
+      - local

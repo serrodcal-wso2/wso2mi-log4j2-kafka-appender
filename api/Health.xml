@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<api context="/health" name="Health" xmlns="http://ws.apache.org/ns/synapse">
+    <resource methods="GET" uri-template="/live">
+        <inSequence>
+            <log level="full">
+                <property name="**** [API] - IN" value="/health/live"/>
+            </log>
+            <payloadFactory media-type="json">
+                <format>{"STATUS": "UP", "SYSTEM_DATE": "$1", "REST_URL_POSTFIX": "$2"}</format>
+                <args>
+                    <arg evaluator="xml" expression="get-property('SYSTEM_DATE', 'yyyy-MM-dd HH:mm:ss.SSSXXX')"/>
+                    <arg evaluator="xml" expression="get-property('axis2', 'REST_URL_POSTFIX')"/>
+                </args>
+            </payloadFactory>
+            <respond/>
+        </inSequence>
+        <outSequence/>
+        <faultSequence/>
+    </resource>
+</api>
